@@ -5,10 +5,17 @@ import dotenv from "dotenv";
 import sequelize from './config/db.js'
 import employeeRoutes from './routes/employeeRoutes.js';
 import leaveRoutes from './routes/leaveRoutes.js'
+import session from 'express-session';
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // secure: true if using HTTPS
+}));
 
 app.use(
   cors({

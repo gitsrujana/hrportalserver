@@ -221,9 +221,9 @@ export const loginemployee = async (req, res) => {
 
   const { email, password } = req.body;
   try {
-    const employee = await Employee .findOne({ where: { email } });
+    const employee = await Employee.findOne({ where: { email } });
     if (!employee) {
-      return res.status(404).json({ message: "employer not found" });
+      return res.status(404).json({ message: "Employee not found" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, employee.password);
@@ -235,13 +235,23 @@ export const loginemployee = async (req, res) => {
       { id: employee.id, email: employee.email },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
+
     );
 
-    res.status(200).json({ message: "Login successful", token });
+    
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+      })
+      .status(200)
+      .json({ message: "Login successful-backend" ,employeename:employee.name});
   } catch (error) {
+    console.error("Login error:", error.message, error.stack);
     res.status(500).json({ error: error.message });
   }
 };
+
 
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
@@ -288,9 +298,34 @@ export const resetPassword = async (req, res) => {
     res.status(500).json({ message: "Server error", error });
   }
 };
-export const logout = (req, res, next) => {
-  req.logout((err) => {
-    if (err) return next(err);
-    res.redirect('/');
-  });
+
+
+
+
+export const logout = async (req, res) => {
+  try {
+
+    res.clearCookie('token', {
+      httpOnly: true, 
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict', 
+    });
+
+
+    if (req.session) {
+      req.session.destroy((err) => {
+        if (err) {
+          return res.status(500).json({ message: 'Could not log out. Please try again.' });
+        }
+      });
+    }
+
+    res.status(200).json({ message: 'Logout successful-backend'  });
+  } catch (error) {
+    console.error('Logout Error:', error);
+    res.status(500).json({ message: 'Internal server error during logout' });
+  }
 };
+
+
+

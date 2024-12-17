@@ -31,6 +31,6 @@ router.delete('/delete/:id', deleteEmployee);
 router.post('/login', loginemployee); 
 router.post('/forgot-password', forgotPassword); 
 router.post('/reset-password', resetPassword); 
-router.post('/logout', logout); 
+router.post('/logout',logout);
 
 export default router;
