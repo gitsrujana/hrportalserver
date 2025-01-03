@@ -6,6 +6,7 @@ import sequelize from './config/db.js'
 import employeeRoutes from './routes/employeeRoutes.js';
 import leaveRoutes from './routes/leaveRoutes.js'
 import session from 'express-session';
+import attendanceRoutes from './routes/attendanceRoutes.js';
 dotenv.config();
 
 const app = express();
@@ -29,6 +30,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/v1/api/employees', employeeRoutes);
 app.use('/v1/api/leaveapplication',leaveRoutes);
+app.use('/v1/api/attendance', attendanceRoutes);
 
 (async () => {
   try {
