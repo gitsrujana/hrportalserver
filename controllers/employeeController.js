@@ -21,7 +21,7 @@ const employeeValidationSchema = Joi.object({
   salary: Joi.number().positive().required(),
   address: Joi.string().min(2).required(),
   category: Joi.string().valid('IT', 'Designer', 'Developer').required(),
-  file_name: Joi.string().optional(),
+
 });
 
 const loginSchema = Joi.object({
@@ -92,22 +92,30 @@ console.log('otps.get(email) === otp: ', otps.get(email) === otp);
 
 export const addEmployee = async (req, res) => {
   try {
-    const { name, email, password,contactnumber, salary, address, category } = req.body;
+    const { name, email,confirmPassword, password, contactnumber, salary, address, category } = req.body;
 
    
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    }
+
+   
+    delete req.body.confirmPassword;
+
     const { error } = employeeValidationSchema.validate(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
-    
+  
     const existingEmployee = await Employee.findOne({ where: { email } });
     if (existingEmployee) return res.status(400).json({ message: 'Email already exists' });
 
- 
+   
     const hashedPassword = await bcrypt.hash(password, 10);
 
    
-    const fileName = req.file ? req.file.filename : req.body.file_name;
+  
 
+    
     const newEmployee = await Employee.create({
       name,
       email,
@@ -116,15 +124,17 @@ export const addEmployee = async (req, res) => {
       salary,
       address,
       category,
-      file_name: fileName, 
+     
     });
 
+    
     const token = jwt.sign(
       { userId: newEmployee.id },
       JWT_SECRET,
       { expiresIn: '1h' }
     );
 
+    
     res.status(201).json({
       message: "Employee registered successfully",
       token,
@@ -134,6 +144,7 @@ export const addEmployee = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 
 
 export const getAllEmployees = async (req, res) => {
@@ -147,10 +158,10 @@ export const getAllEmployees = async (req, res) => {
 };
 
 
-export const getEmployeeById = async (req, res) => {
+export const getEmployeeByEmail  = async (req, res) => {
   try {
-    const { id } = req.params;
-    const employee = await Employee.findByPk(id);
+    const { email  } = req.params;
+    const employee = await Employee.findByPk(email );
     if (!employee) return res.status(404).json({ message: 'Employee not found' });
 
     res.status(200).json(employee);
@@ -163,31 +174,34 @@ export const getEmployeeById = async (req, res) => {
 
 export const updateEmployee = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { name, email, password,contactnumber, salary, address, category } = req.body;
+    const { email } = req.params; 
+    const { name, password, contactnumber, salary, address, category } = req.body;
 
-  
+    
     const { error } = employeeValidationSchema.validate(req.body);
     if (error) return res.status(400).json({ message: error.details[0].message });
 
  
-    const employee = await Employee.findByPk(id);
+    const employee = await Employee.findOne({ where: { email } });
     if (!employee) return res.status(404).json({ message: 'Employee not found' });
 
    
     const hashedPassword = password ? await bcrypt.hash(password, 10) : undefined;
 
-   
     const updatedEmployee = await employee.update({
       name,
-      email,
+     
       password: hashedPassword || employee.password, 
       contactnumber,
       salary,
       address,
       category,
-    });
+      
+    },
+    { new: true } 
+  );
 
+    
     res.status(200).json({ message: 'Employee updated successfully', employee: updatedEmployee });
   } catch (error) {
     console.error('Error updating employee:', error);
@@ -196,19 +210,26 @@ export const updateEmployee = async (req, res) => {
 };
 
 
+
 export const deleteEmployee = async (req, res) => {
   try {
-    const { id } = req.params;
-    const deletedEmployee = await Employee.destroy({ where: { id } });
+    const { email } = req.params;
 
-    if (!deletedEmployee) return res.status(404).json({ message: 'Employee not found' });
+    const employee = await Employee.findOne({ where: { email } });
+    if (!employee) {
+      return res.status(404).json({ message: 'Employee not found' });
+    }
+
+    await Employee.destroy({ where: { email } });
 
     res.status(200).json({ message: 'Employee deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting employee:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };
+
+
+
 
 
 

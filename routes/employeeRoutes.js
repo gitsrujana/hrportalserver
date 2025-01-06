@@ -1,31 +1,31 @@
 import express from 'express';
-import multer from 'multer';
+
 import {
   sendOtp,
   verifyOtp,
   addEmployee,
   getAllEmployees,
-  getEmployeeById,
   updateEmployee,
   deleteEmployee,
   loginemployee,
   forgotPassword,
   resetPassword,
   logout,
+  getEmployeeByEmail,
 } from '../controllers/employeeController.js';
 
 const router = express.Router();
-const upload = multer({ dest: 'uploads/' });
+
 
 router.post('/otp/send', sendOtp); 
 router.post('/otp/verify', verifyOtp); 
 
 
-router.post('/add', upload.single('profilePicture'), addEmployee);
+router.post('/add',  addEmployee);
 router.get('/get', getAllEmployees);
-router.get('/:id', getEmployeeById);
-router.put('/update/:id', updateEmployee); 
-router.delete('/delete/:id', deleteEmployee); 
+router.get('/:email', getEmployeeByEmail);
+router.put('/update/:email', updateEmployee); 
+router.delete('/delete/:email', deleteEmployee); 
 
 
 router.post('/login', loginemployee); 

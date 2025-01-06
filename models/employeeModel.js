@@ -1,7 +1,8 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
-
+import Attendance from './Attendance.js';
 const Employee = sequelize.define('Employee', {
+ 
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -10,14 +11,18 @@ const Employee = sequelize.define('Employee', {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
+     primaryKey: true,
+      field: 'email'
   },
+  
+  
   password: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  contactnumber:{
-    type:DataTypes.STRING,
-    allowNull:false,
+  contactnumber: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
   salary: {
     type: DataTypes.FLOAT,
@@ -31,13 +36,18 @@ const Employee = sequelize.define('Employee', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-file_name: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+ 
 }, {
   tableName: 'employees',
-  timestamps: false, 
+  timestamps: false,
+});
+Employee.hasMany(Attendance, {
+  foreignKey: 'email',
+  onDelete: 'CASCADE', 
+  onUpdate: 'CASCADE',
 });
 
-export default Employee;
+Attendance.belongsTo(Employee, {
+  foreignKey: 'email',
+});
+export default Employee
