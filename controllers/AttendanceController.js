@@ -1,5 +1,6 @@
 import Attendance from '../models/Attendance.js';
 import Employee from '../models/employeeModel.js';
+
 const AttendanceController = {
 
   async checkIn(req, res) {
@@ -185,6 +186,10 @@ const AttendanceController = {
     res.status(500).json({ message: "Server error while marking absent" });
   }
 },
+
+
+
+
 };
 export default AttendanceController;
 

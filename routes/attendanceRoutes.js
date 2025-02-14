@@ -12,4 +12,6 @@ router.put('/update/:email', AttendanceController.updateAttendanceByEmail);
 router.delete('/delete/:email', AttendanceController.deleteEmployeeByEmail);
 router.post('/mark-absent',AttendanceController. markAbsent);
 
+
+
 export default router;

@@ -34,8 +34,8 @@ const otps = new Map();
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "srujanabadepally123@gmail.com",
-    pass: "cvvx itcg soyq lksq",
+    user: "info.trietreetech@gmail.com",
+    pass: "luof wcll xoyj dbdc",
   },
 });
 
@@ -46,7 +46,7 @@ export const sendOtp = async (req, res) => {
   otps.set(email, otp);
 
   const mailOptions = {
-    from: "srujanabadepally123@gmail.com",
+    from: "info.trietreetech@gmail.com",
     to: email,
     subject: "Your OTP for Job Portal Registration",
     text: `Your OTP is ${otp}. It will expire in 10 minutes.`,
@@ -272,6 +272,8 @@ export const loginemployee = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+
 
 
 export const forgotPassword = async (req, res) => {

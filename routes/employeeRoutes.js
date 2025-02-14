@@ -12,6 +12,8 @@ import {
   resetPassword,
   logout,
   getEmployeeByEmail,
+ 
+
 } from '../controllers/employeeController.js';
 
 const router = express.Router();
@@ -32,5 +34,8 @@ router.post('/login', loginemployee);
 router.post('/forgot-password', forgotPassword); 
 router.post('/reset-password', resetPassword); 
 router.post('/logout',logout);
+
+
+
 
 export default router;
