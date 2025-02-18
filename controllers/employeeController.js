@@ -54,11 +54,11 @@ export const sendOtp = async (req, res) => {
 
   try {
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: "OTP sent to email" });
+    res.status(200).json({  success: true, message: "OTP sent to email-backend" });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Error sending OTP", error: error.message });
+      .json({  success: false, message: "Error sending OTP-backend", error: error.message });
   }
 };
 
@@ -349,6 +349,3 @@ export const logout = async (req, res) => {
     res.status(500).json({ message: 'Internal server error during logout' });
   }
 };
-
-
-
