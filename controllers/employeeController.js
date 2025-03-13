@@ -20,7 +20,7 @@ const employeeValidationSchema = Joi.object({
   .required(),
   salary: Joi.number().positive().required(),
   address: Joi.string().min(2).required(),
-  category: Joi.string().valid('IT', 'Designer', 'Developer').required(),
+  category: Joi.string().valid('Hr', 'Designer', 'Developer').required(),
 
 });
 
